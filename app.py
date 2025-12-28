@@ -6,6 +6,8 @@ import sqlite3
 DB_FILE = "scrapes.db"
 
 
+# Database Functions
+
 def init_db():
     conn = None
     
@@ -65,36 +67,14 @@ def save_current_page_to_db(data, current_page):
             conn.close()
 
 
+# Save to file function - maybe implement further?
+
 def save_to_file(soup):
     with open("index.html", "w", encoding="utf-8") as file:
         file.write(str(soup, ))
 
 
-def find_maximum_page(url):
-    print("Finding max pages, please wait...")
-    max_page = 1
-    current_page = 1
-    
-    while True:
-        retries = 0
-        while True:
-            soup = scrape(url, current_page)
-            retries += 1
-            
-            if soup or retries == 10:
-                break
-            
-        data = extract_data(soup)
-        
-        print(max_page, end=" -> ")
-        
-        if not data:
-            print("Found!")
-            return max_page
-        
-        max_page = current_page
-        current_page += 1
-        
+# Print helpers
 
 def extract_data(soup):
     data = []
@@ -113,13 +93,6 @@ def extract_data(soup):
         })
     
     return data
-        
-
-def require_soup(soup):
-    if not soup:
-        print("\n🚨 Please scrape website first (option 1)\n")
-        return False
-    return True
 
 
 def print_quotes(data):
@@ -156,6 +129,41 @@ def print_quotes_authors_tags(data):
             
         print("-" * 100 + "\n")
 
+
+def find_maximum_page(url):
+    print("Finding max pages, please wait...")
+    max_page = 1
+    current_page = 1
+    
+    while True:
+        retries = 0
+        while True:
+            soup = scrape(url, current_page)
+            retries += 1
+            
+            if soup or retries == 10:
+                break
+            
+        data = extract_data(soup)
+        
+        print(max_page, end=" -> ")
+        
+        if not data:
+            print("Found!")
+            return max_page
+        
+        max_page = current_page
+        current_page += 1
+        
+
+def require_soup(soup):
+    if not soup:
+        print("\n🚨 Please scrape website first (option 1)\n")
+        return False
+    return True
+
+
+# Main scraper
 
 def scrape(url, page_to_scrape):
     try:
